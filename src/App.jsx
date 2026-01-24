@@ -58,25 +58,41 @@ function MarkdownPanel({ title, value, onChange }) {
   );
 }
 
-function InventoryList({ items, onChange }) {
+function InventoryList({ items, onChange, onAdd, onRemove }) {
   return (
     <div className="inventory">
-      <h2>Equipment</h2>
-      <ul>
-        {items.map((item, index) => {
-          return (
-            <li key={`${item}-${index}`} className="inventory__item">
-              <span className="inventory__number">{index + 1}.</span>
-              <input
-                className="inventory__input"
-                type="text"
-                value={item}
-                onChange={(event) => onChange(index, event.target.value)}
-              />
-            </li>
-          );
-        })}
-      </ul>
+      <div className="inventory__header">
+        <h2>Equipment</h2>
+        <button className="inventory__add" type="button" onClick={onAdd}>
+          Add item
+        </button>
+      </div>
+      {items.length === 0 ? (
+        <p className="inventory__empty">No equipment yet. Add an item.</p>
+      ) : (
+        <ul>
+          {items.map((item, index) => {
+            return (
+              <li key={`${item}-${index}`} className="inventory__item">
+                <span className="inventory__number">{index + 1}.</span>
+                <input
+                  className="inventory__input"
+                  type="text"
+                  value={item}
+                  onChange={(event) => onChange(index, event.target.value)}
+                />
+                <button
+                  className="inventory__remove"
+                  type="button"
+                  onClick={() => onRemove(index)}
+                >
+                  Remove
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
@@ -93,6 +109,16 @@ export default function App() {
       next[index] = value;
       return next;
     });
+  };
+
+  const addInventoryItem = () => {
+    setInventoryItems((prev) => [...prev, ""]);
+  };
+
+  const removeInventoryItem = (index) => {
+    setInventoryItems((prev) =>
+      prev.filter((_, itemIndex) => itemIndex !== index),
+    );
   };
 
   const addSkill = () => {
@@ -176,7 +202,12 @@ export default function App() {
                 </ul>
               )}
             </section>
-            <InventoryList items={inventoryItems} onChange={updateInventoryItem} />
+            <InventoryList
+              items={inventoryItems}
+              onChange={updateInventoryItem}
+              onAdd={addInventoryItem}
+              onRemove={removeInventoryItem}
+            />
           </main>
         )}
       </div>
