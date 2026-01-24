@@ -13,7 +13,7 @@ const defaultNotes = `### Lineage
 - Impulsive
 `;
 
-const defaultInventory = [
+const defaultEquipment = [
   "Traveler's pack",
   "Iron dagger",
   "Map case",
@@ -111,10 +111,10 @@ function SkillsList({ skills, disabledSkills, onToggle }) {
   );
 }
 
-function InventoryList({ items, unavailable, onToggle }) {
+function EquipmentList({ items, unavailable, onToggle }) {
   return (
     <div className="inventory">
-      <h2>Inventory</h2>
+      <h2>Equipment</h2>
       <ul>
         {items.map((item, index) => {
           const isUnavailable = unavailable.has(index);
@@ -145,7 +145,7 @@ function InventoryList({ items, unavailable, onToggle }) {
 }
 
 export default function App() {
-  const [view, setView] = useState("character");
+  const [view, setView] = useState("notes");
   const [leftNotes, setLeftNotes] = useState(defaultNotes);
   const [rightNotes, setRightNotes] = useState(defaultNotes);
   const [activePhase, setActivePhase] = useState(1);
@@ -183,54 +183,58 @@ export default function App() {
       <header className="topbar">
         <div>
           <h1>Character Sheet</h1>
-          <p>Switch between character notes and inventory tracking.</p>
+          <p>Switch between notes/phases and skills/equipment.</p>
         </div>
         <label className="view-select">
           <span>View</span>
           <select value={view} onChange={(event) => setView(event.target.value)}>
-            <option value="character">Character</option>
-            <option value="inventory">Inventory</option>
+            <option value="notes">Notes & Phases</option>
+            <option value="skills">Skills & Equipment</option>
           </select>
         </label>
       </header>
 
-      {view === "character" ? (
-        <main className="sheet">
-          <MarkdownPanel
-            title="Left Notes"
-            value={leftNotes}
-            onChange={setLeftNotes}
-          />
-          <section className="center">
-            <PhaseTracker
-              phases={phases}
-              activePhase={activePhase}
-              onPhaseChange={setActivePhase}
+      <div className="sheet-frame">
+        {view === "notes" ? (
+          <main className="sheet">
+            <MarkdownPanel
+              title="Left Notes"
+              value={leftNotes}
+              onChange={setLeftNotes}
             />
-            <div className="portrait">
-              <span>Portrait</span>
+            <section className="center">
+              <PhaseTracker
+                phases={phases}
+                activePhase={activePhase}
+                onPhaseChange={setActivePhase}
+              />
+              <div className="portrait">
+                <span>Portrait</span>
+              </div>
+            </section>
+            <MarkdownPanel
+              title="Right Notes"
+              value={rightNotes}
+              onChange={setRightNotes}
+            />
+          </main>
+        ) : (
+          <main className="inventory-view">
+            <div className="skills-view">
+              <SkillsList
+                skills={defaultSkills}
+                disabledSkills={disabledSkills}
+                onToggle={toggleSkill}
+              />
+              <EquipmentList
+                items={defaultEquipment}
+                unavailable={unavailableItems}
+                onToggle={toggleInventory}
+              />
             </div>
-            <SkillsList
-              skills={defaultSkills}
-              disabledSkills={disabledSkills}
-              onToggle={toggleSkill}
-            />
-          </section>
-          <MarkdownPanel
-            title="Right Notes"
-            value={rightNotes}
-            onChange={setRightNotes}
-          />
-        </main>
-      ) : (
-        <main className="inventory-view">
-          <InventoryList
-            items={defaultInventory}
-            unavailable={unavailableItems}
-            onToggle={toggleInventory}
-          />
-        </main>
-      )}
+          </main>
+        )}
+      </div>
     </div>
   );
 }

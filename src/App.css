@@ -36,6 +36,14 @@
   background: #fff;
 }
 
+.sheet-frame {
+  margin: 0 auto;
+  max-width: 520px;
+  width: 100%;
+  aspect-ratio: 1 / 2;
+  min-height: 840px;
+}
+
 .sheet {
   display: grid;
   grid-template-columns: 1fr 1.2fr 1fr;
@@ -171,6 +179,11 @@
   background: #fffdfa;
 }
 
+.skills-view {
+  display: grid;
+  gap: 24px;
+}
+
 .inventory h2 {
   margin-top: 0;
 }
@@ -211,6 +224,10 @@
 }
 
 @media (max-width: 960px) {
+  .sheet-frame {
+    max-width: 480px;
+  }
+
   .sheet {
     grid-template-columns: 1fr;
   }
