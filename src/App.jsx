@@ -71,18 +71,24 @@ function MarkdownPanel({ title, value, onChange }) {
 
 function PhaseTracker({ phases, activePhase, onPhaseChange }) {
   return (
-    <div className="phases">
-      {phases.map((phase) => (
-        <button
-          key={phase}
-          type="button"
-          className={`phase ${activePhase === phase ? "phase--active" : ""}`}
-          onClick={() => onPhaseChange(phase)}
-        >
-          {phase}
-        </button>
-      ))}
-    </div>
+    <section className="phases-block">
+      <div className="phases-block__header">
+        <h2>Phases</h2>
+        <span className="phases-block__label">Check the active phase</span>
+      </div>
+      <div className="phases">
+        {phases.map((phase) => (
+          <button
+            key={phase}
+            type="button"
+            className={`phase ${activePhase === phase ? "phase--active" : ""}`}
+            onClick={() => onPhaseChange(phase)}
+          >
+            {phase}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -145,9 +151,8 @@ function EquipmentList({ items, unavailable, onToggle }) {
 }
 
 export default function App() {
-  const [view, setView] = useState("notes");
-  const [leftNotes, setLeftNotes] = useState(defaultNotes);
-  const [rightNotes, setRightNotes] = useState(defaultNotes);
+  const [view, setView] = useState("equipment");
+  const [notes, setNotes] = useState(defaultNotes);
   const [activePhase, setActivePhase] = useState(1);
   const [disabledSkills, setDisabledSkills] = useState(new Set());
   const [unavailableItems, setUnavailableItems] = useState(new Set());
@@ -183,40 +188,32 @@ export default function App() {
       <header className="topbar">
         <div>
           <h1>Character Sheet</h1>
-          <p>Switch between notes/phases and skills/equipment.</p>
+          <p>Switch between character details and gear.</p>
         </div>
         <label className="view-select">
           <span>View</span>
           <select value={view} onChange={(event) => setView(event.target.value)}>
-            <option value="notes">Notes & Phases</option>
-            <option value="skills">Skills & Equipment</option>
+            <option value="equipment">Skills & Equipment</option>
+            <option value="character">Character View</option>
           </select>
         </label>
       </header>
 
       <div className="sheet-frame">
-        {view === "notes" ? (
+        {view === "character" ? (
           <main className="sheet">
-            <MarkdownPanel
-              title="Left Notes"
-              value={leftNotes}
-              onChange={setLeftNotes}
-            />
             <section className="center">
               <PhaseTracker
                 phases={phases}
                 activePhase={activePhase}
                 onPhaseChange={setActivePhase}
               />
-              <div className="portrait">
-                <span>Portrait</span>
-              </div>
+              <MarkdownPanel
+                title="Character Notes"
+                value={notes}
+                onChange={setNotes}
+              />
             </section>
-            <MarkdownPanel
-              title="Right Notes"
-              value={rightNotes}
-              onChange={setRightNotes}
-            />
           </main>
         ) : (
           <main className="inventory-view">

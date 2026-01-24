@@ -46,7 +46,7 @@
 
 .sheet {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -54,7 +54,7 @@
   background: #fbf8f1;
   border: 2px solid #2b2520;
   padding: 16px;
-  min-height: 640px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -102,10 +102,32 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: center;
+  align-items: stretch;
   padding: 16px;
   border: 2px solid #2b2520;
   background: #fffdfa;
+}
+
+.phases-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.phases-block__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.phases-block__header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.phases-block__label {
+  font-size: 13px;
+  color: #5c5145;
 }
 
 .phases {
@@ -126,20 +148,6 @@
 .phase--active {
   background: #2b2520;
   color: #fff;
-}
-
-.portrait {
-  width: 100%;
-  flex: 1;
-  min-height: 320px;
-  border: 2px solid #2b2520;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 1px;
-  background: #fff;
 }
 
 .skills {
