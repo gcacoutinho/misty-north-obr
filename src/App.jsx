@@ -13,20 +13,7 @@ const defaultNotes = `### Lineage
 - Impulsive
 `;
 
-const defaultEquipment = [
-  "Traveler's pack",
-  "Iron dagger",
-  "Map case",
-  "Healing draft",
-  "Rope (50ft)",
-  "Lantern",
-  "Flint & steel",
-  "Bandages",
-  "Coin pouch",
-  "Spare cloak",
-];
-
-const defaultSkills = [
+const defaultInventory = [
   "Athletics",
   "Arcana",
   "Stealth",
@@ -37,6 +24,16 @@ const defaultSkills = [
   "Survival",
   "Deception",
   "History",
+  "Traveler's pack",
+  "Iron dagger",
+  "Map case",
+  "Healing draft",
+  "Rope (50ft)",
+  "Lantern",
+  "Flint & steel",
+  "Bandages",
+  "Coin pouch",
+  "Spare cloak",
 ];
 
 function MarkdownPanel({ title, value, onChange }) {
@@ -92,55 +89,31 @@ function PhaseTracker({ phases, activePhase, onPhaseChange }) {
   );
 }
 
-function SkillsList({ skills, disabledSkills, onToggle }) {
-  return (
-    <div className="skills">
-      <h3>Skills & Equipment</h3>
-      <ul>
-        {skills.map((skill, index) => {
-          const isDisabled = disabledSkills.has(index);
-          return (
-            <li key={`${skill}-${index}`}>
-              <label className={`skill ${isDisabled ? "skill--disabled" : ""}`}>
-                <input
-                  type="checkbox"
-                  checked={isDisabled}
-                  onChange={() => onToggle(index)}
-                />
-                <span>{skill}</span>
-              </label>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function EquipmentList({ items, unavailable, onToggle }) {
+function InventoryList({ items, unavailable, onToggle, onChange }) {
   return (
     <div className="inventory">
-      <h2>Equipment</h2>
+      <h2>Inventory</h2>
       <ul>
         {items.map((item, index) => {
           const isUnavailable = unavailable.has(index);
           return (
             <li key={`${item}-${index}`} className="inventory__item">
               <span className="inventory__number">{index + 1}.</span>
-              <span
-                className={`inventory__text ${
-                  isUnavailable ? "inventory__text--disabled" : ""
+              <input
+                className={`inventory__input ${
+                  isUnavailable ? "inventory__input--disabled" : ""
                 }`}
-              >
-                {item}
-              </span>
+                type="text"
+                value={item}
+                onChange={(event) => onChange(index, event.target.value)}
+              />
               <label className="inventory__toggle">
                 <input
                   type="checkbox"
                   checked={isUnavailable}
                   onChange={() => onToggle(index)}
                 />
-                <span>Unavailable</span>
+                <span>Used</span>
               </label>
             </li>
           );
@@ -154,13 +127,13 @@ export default function App() {
   const [view, setView] = useState("equipment");
   const [notes, setNotes] = useState(defaultNotes);
   const [activePhase, setActivePhase] = useState(1);
-  const [disabledSkills, setDisabledSkills] = useState(new Set());
+  const [inventoryItems, setInventoryItems] = useState(defaultInventory);
   const [unavailableItems, setUnavailableItems] = useState(new Set());
 
   const phases = useMemo(() => [1, 2, 3, 4, 5], []);
 
-  const toggleSkill = (index) => {
-    setDisabledSkills((prev) => {
+  const toggleInventory = (index) => {
+    setUnavailableItems((prev) => {
       const next = new Set(prev);
       if (next.has(index)) {
         next.delete(index);
@@ -171,14 +144,10 @@ export default function App() {
     });
   };
 
-  const toggleInventory = (index) => {
-    setUnavailableItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
+  const updateInventoryItem = (index, value) => {
+    setInventoryItems((prev) => {
+      const next = [...prev];
+      next[index] = value;
       return next;
     });
   };
@@ -217,18 +186,12 @@ export default function App() {
           </main>
         ) : (
           <main className="inventory-view">
-            <div className="skills-view">
-              <SkillsList
-                skills={defaultSkills}
-                disabledSkills={disabledSkills}
-                onToggle={toggleSkill}
-              />
-              <EquipmentList
-                items={defaultEquipment}
-                unavailable={unavailableItems}
-                onToggle={toggleInventory}
-              />
-            </div>
+            <InventoryList
+              items={inventoryItems}
+              unavailable={unavailableItems}
+              onToggle={toggleInventory}
+              onChange={updateInventoryItem}
+            />
           </main>
         )}
       </div>
