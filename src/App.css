@@ -46,7 +46,7 @@
 
 .sheet {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -148,19 +148,6 @@
 .phase--active {
   background: #2b2520;
   color: #fff;
-}
-
-.portrait {
-  width: 100%;
-  min-height: 520px;
-  border: 2px solid #2b2520;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  letter-spacing: 1px;
-  background: #fff;
 }
 
 .skills {

@@ -214,9 +214,6 @@ export default function App() {
                 onChange={setNotes}
               />
             </section>
-            <div className="portrait">
-              <span>Portrait</span>
-            </div>
           </main>
         ) : (
           <main className="inventory-view">
