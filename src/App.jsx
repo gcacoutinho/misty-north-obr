@@ -17,6 +17,11 @@ const defaultSkills = [];
 
 const defaultInventory = [];
 
+const createListItem = (value = "") => ({
+  id: crypto.randomUUID(),
+  value,
+});
+
 function MarkdownPanel({ title, value, onChange }) {
   const [isEditing, setIsEditing] = useState(true);
 
@@ -62,18 +67,18 @@ function InventoryList({ items, onChange, onAdd, onRemove }) {
         <ul>
           {items.map((item, index) => {
             return (
-              <li key={`${item}-${index}`} className="inventory__item">
+              <li key={item.id} className="inventory__item">
                 <span className="inventory__number">{index + 1}.</span>
                 <input
                   className="inventory__input"
                   type="text"
-                  value={item}
-                  onChange={(event) => onChange(index, event.target.value)}
+                  value={item.value}
+                  onChange={(event) => onChange(item.id, event.target.value)}
                 />
                 <button
                   className="inventory__remove"
                   type="button"
-                  onClick={() => onRemove(index)}
+                  onClick={() => onRemove(item.id)}
                   aria-label="Remove item"
                 >
                   <span aria-hidden="true">🗑️</span>
@@ -90,41 +95,41 @@ function InventoryList({ items, onChange, onAdd, onRemove }) {
 export default function App() {
   const [view, setView] = useState("equipment");
   const [notes, setNotes] = useState(defaultNotes);
-  const [skills, setSkills] = useState(defaultSkills);
-  const [inventoryItems, setInventoryItems] = useState(defaultInventory);
+  const [skills, setSkills] = useState(
+    defaultSkills.map((skill) => createListItem(skill)),
+  );
+  const [inventoryItems, setInventoryItems] = useState(
+    defaultInventory.map((item) => createListItem(item)),
+  );
 
-  const updateInventoryItem = (index, value) => {
+  const updateInventoryItem = (id, value) => {
     setInventoryItems((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
+      return prev.map((item) => (item.id === id ? { ...item, value } : item));
     });
   };
 
   const addInventoryItem = () => {
-    setInventoryItems((prev) => [...prev, ""]);
+    setInventoryItems((prev) => [...prev, createListItem()]);
   };
 
-  const removeInventoryItem = (index) => {
-    setInventoryItems((prev) =>
-      prev.filter((_, itemIndex) => itemIndex !== index),
-    );
+  const removeInventoryItem = (id) => {
+    setInventoryItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const addSkill = () => {
-    setSkills((prev) => [...prev, ""]);
+    setSkills((prev) => [...prev, createListItem()]);
   };
 
-  const updateSkill = (index, value) => {
+  const updateSkill = (id, value) => {
     setSkills((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
+      return prev.map((skill) =>
+        skill.id === id ? { ...skill, value } : skill,
+      );
     });
   };
 
-  const removeSkill = (index) => {
-    setSkills((prev) => prev.filter((_, skillIndex) => skillIndex !== index));
+  const removeSkill = (id) => {
+    setSkills((prev) => prev.filter((skill) => skill.id !== id));
   };
 
   return (
@@ -169,21 +174,21 @@ export default function App() {
                 <p className="skills__empty">No skills yet. Add one.</p>
               ) : (
                 <ul className="skills__list">
-                  {skills.map((skill, index) => (
-                    <li key={`${skill}-${index}`} className="skills__item">
+                  {skills.map((skill) => (
+                    <li key={skill.id} className="skills__item">
                       <input
                         className="skills__input"
                         type="text"
-                        value={skill}
+                        value={skill.value}
                         onChange={(event) =>
-                          updateSkill(index, event.target.value)
+                          updateSkill(skill.id, event.target.value)
                         }
                         placeholder="New skill"
                       />
                       <button
                         className="skills__remove"
                         type="button"
-                        onClick={() => removeSkill(index)}
+                        onClick={() => removeSkill(skill.id)}
                       >
                         Remove
                       </button>
