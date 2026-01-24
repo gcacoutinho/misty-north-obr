@@ -234,6 +234,8 @@
   padding: 6px 10px;
   background: #fff;
   cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
 }
 
 @media (max-width: 960px) {

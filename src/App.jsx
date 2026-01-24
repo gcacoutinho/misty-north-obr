@@ -15,18 +15,7 @@ const defaultNotes = `### Lineage
 
 const defaultSkills = [];
 
-const defaultInventory = [
-  "Traveler's pack",
-  "Iron dagger",
-  "Map case",
-  "Healing draft",
-  "Rope (50ft)",
-  "Lantern",
-  "Flint & steel",
-  "Bandages",
-  "Coin pouch",
-  "Spare cloak",
-];
+const defaultInventory = [];
 
 function MarkdownPanel({ title, value, onChange }) {
   const [isEditing, setIsEditing] = useState(true);
@@ -85,8 +74,9 @@ function InventoryList({ items, onChange, onAdd, onRemove }) {
                   className="inventory__remove"
                   type="button"
                   onClick={() => onRemove(index)}
+                  aria-label="Remove item"
                 >
-                  Remove
+                  <span aria-hidden="true">🗑️</span>
                 </button>
               </li>
             );
