@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import "./App.css";
 
@@ -13,17 +13,9 @@ const defaultNotes = `### Lineage
 - Impulsive
 `;
 
+const defaultSkills = [];
+
 const defaultInventory = [
-  "Athletics",
-  "Arcana",
-  "Stealth",
-  "Medicine",
-  "Persuasion",
-  "Investigation",
-  "Perception",
-  "Survival",
-  "Deception",
-  "History",
   "Traveler's pack",
   "Iron dagger",
   "Map case",
@@ -66,55 +58,21 @@ function MarkdownPanel({ title, value, onChange }) {
   );
 }
 
-function PhaseTracker({ phases, activePhase, onPhaseChange }) {
-  return (
-    <section className="phases-block">
-      <div className="phases-block__header">
-        <h2>Phases</h2>
-        <span className="phases-block__label">Check the active phase</span>
-      </div>
-      <div className="phases">
-        {phases.map((phase) => (
-          <button
-            key={phase}
-            type="button"
-            className={`phase ${activePhase === phase ? "phase--active" : ""}`}
-            onClick={() => onPhaseChange(phase)}
-          >
-            {phase}
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function InventoryList({ items, unavailable, onToggle, onChange }) {
+function InventoryList({ items, onChange }) {
   return (
     <div className="inventory">
-      <h2>Inventory</h2>
+      <h2>Equipment</h2>
       <ul>
         {items.map((item, index) => {
-          const isUnavailable = unavailable.has(index);
           return (
             <li key={`${item}-${index}`} className="inventory__item">
               <span className="inventory__number">{index + 1}.</span>
               <input
-                className={`inventory__input ${
-                  isUnavailable ? "inventory__input--disabled" : ""
-                }`}
+                className="inventory__input"
                 type="text"
                 value={item}
                 onChange={(event) => onChange(index, event.target.value)}
               />
-              <label className="inventory__toggle">
-                <input
-                  type="checkbox"
-                  checked={isUnavailable}
-                  onChange={() => onToggle(index)}
-                />
-                <span>Used</span>
-              </label>
             </li>
           );
         })}
@@ -126,23 +84,8 @@ function InventoryList({ items, unavailable, onToggle, onChange }) {
 export default function App() {
   const [view, setView] = useState("equipment");
   const [notes, setNotes] = useState(defaultNotes);
-  const [activePhase, setActivePhase] = useState(1);
+  const [skills, setSkills] = useState(defaultSkills);
   const [inventoryItems, setInventoryItems] = useState(defaultInventory);
-  const [unavailableItems, setUnavailableItems] = useState(new Set());
-
-  const phases = useMemo(() => [1, 2, 3, 4, 5], []);
-
-  const toggleInventory = (index) => {
-    setUnavailableItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
-      return next;
-    });
-  };
 
   const updateInventoryItem = (index, value) => {
     setInventoryItems((prev) => {
@@ -152,31 +95,40 @@ export default function App() {
     });
   };
 
+  const addSkill = () => {
+    setSkills((prev) => [...prev, ""]);
+  };
+
+  const updateSkill = (index, value) => {
+    setSkills((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
+
+  const removeSkill = (index) => {
+    setSkills((prev) => prev.filter((_, skillIndex) => skillIndex !== index));
+  };
+
   return (
     <div className="app">
-      <header className="topbar">
-        <div>
-          <h1>Character Sheet</h1>
-          <p>Switch between character details and gear.</p>
-        </div>
-        <label className="view-select">
-          <span>View</span>
-          <select value={view} onChange={(event) => setView(event.target.value)}>
-            <option value="equipment">Skills & Equipment</option>
-            <option value="character">Character View</option>
-          </select>
-        </label>
-      </header>
+      <div className="sheet-controls">
+        <select
+          className="view-select"
+          value={view}
+          onChange={(event) => setView(event.target.value)}
+          aria-label="Select view"
+        >
+          <option value="equipment">Skills & Equipment</option>
+          <option value="character">Character View</option>
+        </select>
+      </div>
 
       <div className="sheet-frame">
         {view === "character" ? (
           <main className="sheet">
             <section className="center">
-              <PhaseTracker
-                phases={phases}
-                activePhase={activePhase}
-                onPhaseChange={setActivePhase}
-              />
               <MarkdownPanel
                 title="Character Notes"
                 value={notes}
@@ -186,12 +138,45 @@ export default function App() {
           </main>
         ) : (
           <main className="inventory-view">
-            <InventoryList
-              items={inventoryItems}
-              unavailable={unavailableItems}
-              onToggle={toggleInventory}
-              onChange={updateInventoryItem}
-            />
+            <section className="skills">
+              <div className="skills__header">
+                <h2>Skills</h2>
+                <button
+                  className="skills__add"
+                  type="button"
+                  onClick={addSkill}
+                >
+                  Add skill
+                </button>
+              </div>
+              {skills.length === 0 ? (
+                <p className="skills__empty">No skills yet. Add one.</p>
+              ) : (
+                <ul className="skills__list">
+                  {skills.map((skill, index) => (
+                    <li key={`${skill}-${index}`} className="skills__item">
+                      <input
+                        className="skills__input"
+                        type="text"
+                        value={skill}
+                        onChange={(event) =>
+                          updateSkill(index, event.target.value)
+                        }
+                        placeholder="New skill"
+                      />
+                      <button
+                        className="skills__remove"
+                        type="button"
+                        onClick={() => removeSkill(index)}
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+            <InventoryList items={inventoryItems} onChange={updateInventoryItem} />
           </main>
         )}
       </div>

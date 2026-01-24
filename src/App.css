@@ -4,36 +4,19 @@
   padding: 24px;
 }
 
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.topbar h1 {
-  margin: 0 0 4px;
-  font-size: 32px;
-}
-
-.topbar p {
-  margin: 0;
-  color: #5c5145;
+.sheet-controls {
+  margin: 0 auto 20px;
+  max-width: 520px;
+  width: 100%;
 }
 
 .view-select {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-weight: 600;
-}
-
-.view-select select {
-  padding: 6px 10px;
-  border-radius: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid #b9aa92;
   background: #fff;
+  font-weight: 600;
 }
 
 .sheet-frame {
@@ -108,52 +91,80 @@
   background: #fffdfa;
 }
 
-.phases-block {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.phases-block__header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.phases-block__header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.phases-block__label {
-  font-size: 13px;
-  color: #5c5145;
-}
-
-.phases {
-  display: grid;
-  grid-template-columns: repeat(5, 44px);
-  gap: 8px;
-}
-
-.phase {
-  width: 44px;
-  height: 44px;
-  border: 2px solid #2b2520;
-  background: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.phase--active {
-  background: #2b2520;
-  color: #fff;
-}
-
 .inventory-view {
   border: 2px solid #2b2520;
   padding: 24px;
   background: #fffdfa;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.skills {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skills__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.skills__add {
+  border: 1px solid #2b2520;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.skills__empty {
+  margin: 0;
+  color: #5c5145;
+}
+
+.skills__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.skills__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #b9aa92;
+  background: #fff;
+}
+
+.skills__input {
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 4px 0;
+  font: inherit;
+  background: transparent;
+}
+
+.skills__input:focus {
+  outline: none;
+  border-bottom-color: #2b2520;
+}
+
+.skills__remove {
+  border: 1px solid #2b2520;
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: #fff;
+  cursor: pointer;
 }
 
 .inventory h2 {
@@ -170,7 +181,7 @@
 
 .inventory__item {
   display: grid;
-  grid-template-columns: 32px 1fr auto;
+  grid-template-columns: 32px 1fr;
   align-items: center;
   gap: 16px;
   padding: 12px 16px;
@@ -194,18 +205,6 @@
 .inventory__input:focus {
   outline: none;
   border-bottom-color: #2b2520;
-}
-
-.inventory__input--disabled {
-  text-decoration: line-through;
-  color: #8a7b65;
-}
-
-.inventory__toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
 }
 
 @media (max-width: 960px) {
