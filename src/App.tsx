@@ -92,11 +92,11 @@ function InventoryList({
   const isAtLimit = items.length >= MAX_LIST_ITEMS;
 
   return (
-    <div className="inventory">
-      <div className="inventory__header">
+    <section className="list">
+      <div className="list__header">
         <h2>Equipment</h2>
         <button
-          className="inventory__add"
+          className="list__add"
           type="button"
           onClick={onAdd}
           disabled={isAtLimit}
@@ -105,12 +105,12 @@ function InventoryList({
         </button>
       </div>
       {isAtLimit ? (
-        <p className="inventory__limit">Maximum of 10 items reached.</p>
+        <p className="list__limit">Maximum of 10 items reached.</p>
       ) : null}
       {items.length === 0 ? (
-        <p className="inventory__empty">No equipment yet. Add an item.</p>
+        <p className="list__empty">No equipment yet. Add an item.</p>
       ) : (
-        <ul className="inventory__list">
+        <ul className="list__items">
           {items.map((item, index) => (
             <ListEntry
               key={item.id}
@@ -125,7 +125,7 @@ function InventoryList({
           ))}
         </ul>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -254,11 +254,11 @@ export default function App() {
             onChange={handleNotesChange}
             textareaRef={notesInputRef}
           />
-          <section className="skills">
-            <div className="skills__header">
+          <section className="list">
+            <div className="list__header">
               <h2>Skills</h2>
               <button
-                className="skills__add"
+                className="list__add"
                 type="button"
                 onClick={addSkill}
                 disabled={skills.length >= MAX_LIST_ITEMS}
@@ -267,12 +267,12 @@ export default function App() {
               </button>
             </div>
             {skills.length >= MAX_LIST_ITEMS ? (
-              <p className="skills__limit">Maximum of 10 skills reached.</p>
+              <p className="list__limit">Maximum of 10 skills reached.</p>
             ) : null}
             {skills.length === 0 ? (
-              <p className="skills__empty">No skills yet. Add one.</p>
+              <p className="list__empty">No skills yet. Add one.</p>
             ) : (
-              <ul className="skills__list">
+              <ul className="list__items">
                 {skills.map((skill, index) => (
                   <ListEntry
                     key={skill.id}
@@ -295,11 +295,11 @@ export default function App() {
             onRemove={removeInventoryItem}
             onToggle={toggleInventoryItem}
           />
-          <section className="skills">
-            <div className="skills__header">
+          <section className="list">
+            <div className="list__header">
               <h2>Spells</h2>
               <button
-                className="skills__add"
+                className="list__add"
                 type="button"
                 onClick={addSpell}
                 disabled={spells.length >= MAX_LIST_ITEMS}
@@ -308,12 +308,12 @@ export default function App() {
               </button>
             </div>
             {spells.length >= MAX_LIST_ITEMS ? (
-              <p className="skills__limit">Maximum of 10 spells reached.</p>
+              <p className="list__limit">Maximum of 10 spells reached.</p>
             ) : null}
             {spells.length === 0 ? (
-              <p className="skills__empty">No spells yet. Add one.</p>
+              <p className="list__empty">No spells yet. Add one.</p>
             ) : (
-              <ul className="skills__list">
+              <ul className="list__items">
                 {spells.map((spell, index) => (
                   <ListEntry
                     key={spell.id}
