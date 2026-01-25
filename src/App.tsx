@@ -246,90 +246,88 @@ export default function App() {
   return (
     <div className="app">
       <div className="sheet-frame">
-        <main className="inventory-view">
-          <MarkdownPanel
-            className="panel--plain"
-            title="Notes"
-            value={notes}
-            onChange={handleNotesChange}
-            textareaRef={notesInputRef}
-          />
-          <section className="skills">
-            <div className="skills__header">
-              <h2>Skills</h2>
-              <button
-                className="skills__add"
-                type="button"
-                onClick={addSkill}
-                disabled={skills.length >= MAX_LIST_ITEMS}
-              >
-                Add skill
-              </button>
-            </div>
-            {skills.length >= MAX_LIST_ITEMS ? (
-              <p className="skills__limit">Maximum of 10 skills reached.</p>
-            ) : null}
-            {skills.length === 0 ? (
-              <p className="skills__empty">No skills yet. Add one.</p>
-            ) : (
-              <ul className="skills__list">
-                {skills.map((skill, index) => (
-                  <ListEntry
-                    key={skill.id}
-                    item={skill}
-                    index={index}
-                    placeholder="New skill"
-                    itemLabel="skill"
-                    onChange={updateSkill}
-                    onToggle={toggleSkill}
-                    onRemove={removeSkill}
-                  />
-                ))}
-              </ul>
-            )}
-          </section>
-          <InventoryList
-            items={inventoryItems}
-            onChange={updateInventoryItem}
-            onAdd={addInventoryItem}
-            onRemove={removeInventoryItem}
-            onToggle={toggleInventoryItem}
-          />
-          <section className="skills">
-            <div className="skills__header">
-              <h2>Spells</h2>
-              <button
-                className="skills__add"
-                type="button"
-                onClick={addSpell}
-                disabled={spells.length >= MAX_LIST_ITEMS}
-              >
-                Add spell
-              </button>
-            </div>
-            {spells.length >= MAX_LIST_ITEMS ? (
-              <p className="skills__limit">Maximum of 10 spells reached.</p>
-            ) : null}
-            {spells.length === 0 ? (
-              <p className="skills__empty">No spells yet. Add one.</p>
-            ) : (
-              <ul className="skills__list">
-                {spells.map((spell, index) => (
-                  <ListEntry
-                    key={spell.id}
-                    item={spell}
-                    index={index}
-                    placeholder="New spell"
-                    itemLabel="spell"
-                    onChange={updateSpell}
-                    onToggle={toggleSpell}
-                    onRemove={removeSpell}
-                  />
-                ))}
-              </ul>
-            )}
-          </section>
-        </main>
+        <MarkdownPanel
+          className="panel--plain"
+          title="Notes"
+          value={notes}
+          onChange={handleNotesChange}
+          textareaRef={notesInputRef}
+        />
+        <section className="skills">
+          <div className="skills__header">
+            <h2>Skills</h2>
+            <button
+              className="skills__add"
+              type="button"
+              onClick={addSkill}
+              disabled={skills.length >= MAX_LIST_ITEMS}
+            >
+              Add skill
+            </button>
+          </div>
+          {skills.length >= MAX_LIST_ITEMS ? (
+            <p className="skills__limit">Maximum of 10 skills reached.</p>
+          ) : null}
+          {skills.length === 0 ? (
+            <p className="skills__empty">No skills yet. Add one.</p>
+          ) : (
+            <ul className="skills__list">
+              {skills.map((skill, index) => (
+                <ListEntry
+                  key={skill.id}
+                  item={skill}
+                  index={index}
+                  placeholder="New skill"
+                  itemLabel="skill"
+                  onChange={updateSkill}
+                  onToggle={toggleSkill}
+                  onRemove={removeSkill}
+                />
+              ))}
+            </ul>
+          )}
+        </section>
+        <InventoryList
+          items={inventoryItems}
+          onChange={updateInventoryItem}
+          onAdd={addInventoryItem}
+          onRemove={removeInventoryItem}
+          onToggle={toggleInventoryItem}
+        />
+        <section className="skills">
+          <div className="skills__header">
+            <h2>Spells</h2>
+            <button
+              className="skills__add"
+              type="button"
+              onClick={addSpell}
+              disabled={spells.length >= MAX_LIST_ITEMS}
+            >
+              Add spell
+            </button>
+          </div>
+          {spells.length >= MAX_LIST_ITEMS ? (
+            <p className="skills__limit">Maximum of 10 spells reached.</p>
+          ) : null}
+          {spells.length === 0 ? (
+            <p className="skills__empty">No spells yet. Add one.</p>
+          ) : (
+            <ul className="skills__list">
+              {spells.map((spell, index) => (
+                <ListEntry
+                  key={spell.id}
+                  item={spell}
+                  index={index}
+                  placeholder="New spell"
+                  itemLabel="spell"
+                  onChange={updateSpell}
+                  onToggle={toggleSpell}
+                  onRemove={removeSpell}
+                />
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );
