@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import "./App.css";
 import ListEntry from "./components/ListEntry";
@@ -19,14 +19,9 @@ const defaultSkills: string[] = [];
 
 const defaultInventory: string[] = [];
 
-const MAX_LIST_ITEMS = 10;
+const defaultSpells: string[] = [];
 
-type MarkdownPanelProps = {
-  title: string;
-  value: string;
-  onChange: (value: string) => void;
-  className?: string;
-};
+const MAX_LIST_ITEMS = 10;
 
 type InventoryListProps = {
   items: ListItem[];
@@ -36,7 +31,13 @@ type InventoryListProps = {
   onToggle: (id: string) => void;
 };
 
-type ViewMode = "equipment" | "character";
+type MarkdownPanelProps = {
+  title: string;
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+  textareaRef?: React.RefObject<HTMLTextAreaElement>;
+};
 
 const createListItem = (value = "", checked = false): ListItem => ({
   id: crypto.randomUUID(),
@@ -49,6 +50,7 @@ function MarkdownPanel({
   value,
   onChange,
   className,
+  textareaRef,
 }: MarkdownPanelProps) {
   const [isEditing, setIsEditing] = useState(true);
 
@@ -69,6 +71,7 @@ function MarkdownPanel({
           className="panel__input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          ref={textareaRef}
         />
       ) : (
         <div className="panel__preview">
@@ -127,13 +130,16 @@ function InventoryList({
 }
 
 export default function App() {
-  const [view, setView] = useState<ViewMode>("equipment");
   const [notes, setNotes] = useState(defaultNotes);
+  const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const [skills, setSkills] = useState<ListItem[]>(
     defaultSkills.map((skill) => createListItem(skill)),
   );
   const [inventoryItems, setInventoryItems] = useState<ListItem[]>(
     defaultInventory.map((item) => createListItem(item)),
+  );
+  const [spells, setSpells] = useState<ListItem[]>(
+    defaultSpells.map((spell) => createListItem(spell)),
   );
 
   const updateInventoryItem = (id: string, value: string) => {
@@ -194,75 +200,136 @@ export default function App() {
     setSkills((prev) => prev.filter((skill) => skill.id !== id));
   };
 
+  const addSpell = () => {
+    setSpells((prev) => {
+      if (prev.length >= MAX_LIST_ITEMS) {
+        return prev;
+      }
+
+      return [...prev, createListItem()];
+    });
+  };
+
+  const updateSpell = (id: string, value: string) => {
+    setSpells((prev) => {
+      return prev.map((spell) =>
+        spell.id === id ? { ...spell, value } : spell,
+      );
+    });
+  };
+
+  const toggleSpell = (id: string) => {
+    setSpells((prev) =>
+      prev.map((spell) =>
+        spell.id === id ? { ...spell, checked: !spell.checked } : spell,
+      ),
+    );
+  };
+
+  const removeSpell = (id: string) => {
+    setSpells((prev) => prev.filter((spell) => spell.id !== id));
+  };
+
+  useEffect(() => {
+    if (!notesInputRef.current) {
+      return;
+    }
+
+    notesInputRef.current.style.height = "auto";
+    notesInputRef.current.style.height = `${notesInputRef.current.scrollHeight}px`;
+  }, [notes]);
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+  };
+
   return (
     <div className="app">
-      <div className="sheet-controls">
-        <select
-          className="view-select"
-          value={view}
-          onChange={(event) => setView(event.target.value as ViewMode)}
-          aria-label="Select view"
-        >
-          <option value="equipment">Skills & Equipment</option>
-          <option value="character">Character View</option>
-        </select>
-      </div>
-
       <div className="sheet-frame">
-        {view === "character" ? (
-          <main className="inventory-view">
-            <MarkdownPanel
-              className="panel--plain"
-              title="Character Notes"
-              value={notes}
-              onChange={setNotes}
-            />
-          </main>
-        ) : (
-          <main className="inventory-view">
-            <section className="skills">
-              <div className="skills__header">
-                <h2>Skills</h2>
-                <button
-                  className="skills__add"
-                  type="button"
-                  onClick={addSkill}
-                  disabled={skills.length >= MAX_LIST_ITEMS}
-                >
-                  Add skill
-                </button>
-              </div>
-              {skills.length >= MAX_LIST_ITEMS ? (
-                <p className="skills__limit">Maximum of 10 skills reached.</p>
-              ) : null}
-              {skills.length === 0 ? (
-                <p className="skills__empty">No skills yet. Add one.</p>
-              ) : (
-                <ul className="skills__list">
-                  {skills.map((skill, index) => (
-                    <ListEntry
-                      key={skill.id}
-                      item={skill}
-                      index={index}
-                      placeholder="New skill"
-                      itemLabel="skill"
-                      onChange={updateSkill}
-                      onToggle={toggleSkill}
-                      onRemove={removeSkill}
-                    />
-                  ))}
-                </ul>
-              )}
-            </section>
-            <InventoryList
-              items={inventoryItems}
-              onChange={updateInventoryItem}
-              onAdd={addInventoryItem}
-              onRemove={removeInventoryItem}
-              onToggle={toggleInventoryItem}
-            />
-          </main>
-        )}
+        <main className="inventory-view">
+          <MarkdownPanel
+            className="panel--plain"
+            title="Notes"
+            value={notes}
+            onChange={handleNotesChange}
+            textareaRef={notesInputRef}
+          />
+          <section className="skills">
+            <div className="skills__header">
+              <h2>Skills</h2>
+              <button
+                className="skills__add"
+                type="button"
+                onClick={addSkill}
+                disabled={skills.length >= MAX_LIST_ITEMS}
+              >
+                Add skill
+              </button>
+            </div>
+            {skills.length >= MAX_LIST_ITEMS ? (
+              <p className="skills__limit">Maximum of 10 skills reached.</p>
+            ) : null}
+            {skills.length === 0 ? (
+              <p className="skills__empty">No skills yet. Add one.</p>
+            ) : (
+              <ul className="skills__list">
+                {skills.map((skill, index) => (
+                  <ListEntry
+                    key={skill.id}
+                    item={skill}
+                    index={index}
+                    placeholder="New skill"
+                    itemLabel="skill"
+                    onChange={updateSkill}
+                    onToggle={toggleSkill}
+                    onRemove={removeSkill}
+                  />
+                ))}
+              </ul>
+            )}
+          </section>
+          <InventoryList
+            items={inventoryItems}
+            onChange={updateInventoryItem}
+            onAdd={addInventoryItem}
+            onRemove={removeInventoryItem}
+            onToggle={toggleInventoryItem}
+          />
+          <section className="skills">
+            <div className="skills__header">
+              <h2>Spells</h2>
+              <button
+                className="skills__add"
+                type="button"
+                onClick={addSpell}
+                disabled={spells.length >= MAX_LIST_ITEMS}
+              >
+                Add spell
+              </button>
+            </div>
+            {spells.length >= MAX_LIST_ITEMS ? (
+              <p className="skills__limit">Maximum of 10 spells reached.</p>
+            ) : null}
+            {spells.length === 0 ? (
+              <p className="skills__empty">No spells yet. Add one.</p>
+            ) : (
+              <ul className="skills__list">
+                {spells.map((spell, index) => (
+                  <ListEntry
+                    key={spell.id}
+                    item={spell}
+                    index={index}
+                    placeholder="New spell"
+                    itemLabel="spell"
+                    onChange={updateSpell}
+                    onToggle={toggleSpell}
+                    onRemove={removeSpell}
+                  />
+                ))}
+              </ul>
+            )}
+          </section>
+        </main>
       </div>
     </div>
   );
