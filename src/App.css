@@ -122,6 +122,17 @@
   cursor: pointer;
 }
 
+.skills__add:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.skills__limit {
+  margin: 0;
+  color: #5c5145;
+  font-size: 14px;
+}
+
 .skills__empty {
   margin: 0;
   color: #5c5145;
@@ -185,6 +196,17 @@
   background: #fff;
   font-weight: 600;
   cursor: pointer;
+}
+
+.inventory__add:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.inventory__limit {
+  margin: 0;
+  color: #5c5145;
+  font-size: 14px;
 }
 
 .inventory__empty {

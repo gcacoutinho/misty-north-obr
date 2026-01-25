@@ -17,6 +17,8 @@ const defaultSkills = [];
 
 const defaultInventory = [];
 
+const MAX_LIST_ITEMS = 10;
+
 const createListItem = (value = "") => ({
   id: crypto.randomUUID(),
   value,
@@ -53,14 +55,24 @@ function MarkdownPanel({ title, value, onChange }) {
 }
 
 function InventoryList({ items, onChange, onAdd, onRemove }) {
+  const isAtLimit = items.length >= MAX_LIST_ITEMS;
+
   return (
     <div className="inventory">
       <div className="inventory__header">
         <h2>Equipment</h2>
-        <button className="inventory__add" type="button" onClick={onAdd}>
+        <button
+          className="inventory__add"
+          type="button"
+          onClick={onAdd}
+          disabled={isAtLimit}
+        >
           Add item
         </button>
       </div>
+      {isAtLimit ? (
+        <p className="inventory__limit">Maximum of 10 items reached.</p>
+      ) : null}
       {items.length === 0 ? (
         <p className="inventory__empty">No equipment yet. Add an item.</p>
       ) : (
@@ -109,7 +121,13 @@ export default function App() {
   };
 
   const addInventoryItem = () => {
-    setInventoryItems((prev) => [...prev, createListItem()]);
+    setInventoryItems((prev) => {
+      if (prev.length >= MAX_LIST_ITEMS) {
+        return prev;
+      }
+
+      return [...prev, createListItem()];
+    });
   };
 
   const removeInventoryItem = (id) => {
@@ -117,7 +135,13 @@ export default function App() {
   };
 
   const addSkill = () => {
-    setSkills((prev) => [...prev, createListItem()]);
+    setSkills((prev) => {
+      if (prev.length >= MAX_LIST_ITEMS) {
+        return prev;
+      }
+
+      return [...prev, createListItem()];
+    });
   };
 
   const updateSkill = (id, value) => {
@@ -166,10 +190,14 @@ export default function App() {
                   className="skills__add"
                   type="button"
                   onClick={addSkill}
+                  disabled={skills.length >= MAX_LIST_ITEMS}
                 >
                   Add skill
                 </button>
               </div>
+              {skills.length >= MAX_LIST_ITEMS ? (
+                <p className="skills__limit">Maximum of 10 skills reached.</p>
+              ) : null}
               {skills.length === 0 ? (
                 <p className="skills__empty">No skills yet. Add one.</p>
               ) : (
