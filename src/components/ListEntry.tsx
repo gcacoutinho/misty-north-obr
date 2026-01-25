@@ -1,3 +1,15 @@
+import type { ListItem } from "../types";
+
+type ListEntryProps = {
+  item: ListItem;
+  index: number;
+  placeholder: string;
+  itemLabel: string;
+  onChange: (id: string, value: string) => void;
+  onToggle: (id: string) => void;
+  onRemove: (id: string) => void;
+};
+
 export default function ListEntry({
   item,
   index,
@@ -6,7 +18,7 @@ export default function ListEntry({
   onChange,
   onToggle,
   onRemove,
-}) {
+}: ListEntryProps) {
   return (
     <li className="list-entry">
       <span className="list-entry__number">{index + 1}.</span>

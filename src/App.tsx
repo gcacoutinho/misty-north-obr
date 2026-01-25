@@ -2,6 +2,7 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import "./App.css";
 import ListEntry from "./components/ListEntry";
+import type { ListItem } from "./types";
 
 const defaultNotes = `### Lineage
 - Human
@@ -14,19 +15,35 @@ const defaultNotes = `### Lineage
 - Impulsive
 `;
 
-const defaultSkills = [];
+const defaultSkills: string[] = [];
 
-const defaultInventory = [];
+const defaultInventory: string[] = [];
 
 const MAX_LIST_ITEMS = 10;
 
-const createListItem = (value = "", checked = false) => ({
+type MarkdownPanelProps = {
+  title: string;
+  value: string;
+  onChange: (value: string) => void;
+};
+
+type InventoryListProps = {
+  items: ListItem[];
+  onChange: (id: string, value: string) => void;
+  onAdd: () => void;
+  onRemove: (id: string) => void;
+  onToggle: (id: string) => void;
+};
+
+type ViewMode = "equipment" | "character";
+
+const createListItem = (value = "", checked = false): ListItem => ({
   id: crypto.randomUUID(),
   value,
   checked,
 });
 
-function MarkdownPanel({ title, value, onChange }) {
+function MarkdownPanel({ title, value, onChange }: MarkdownPanelProps) {
   const [isEditing, setIsEditing] = useState(true);
 
   return (
@@ -56,7 +73,13 @@ function MarkdownPanel({ title, value, onChange }) {
   );
 }
 
-function InventoryList({ items, onChange, onAdd, onRemove, onToggle }) {
+function InventoryList({
+  items,
+  onChange,
+  onAdd,
+  onRemove,
+  onToggle,
+}: InventoryListProps) {
   const isAtLimit = items.length >= MAX_LIST_ITEMS;
 
   return (
@@ -98,22 +121,22 @@ function InventoryList({ items, onChange, onAdd, onRemove, onToggle }) {
 }
 
 export default function App() {
-  const [view, setView] = useState("equipment");
+  const [view, setView] = useState<ViewMode>("equipment");
   const [notes, setNotes] = useState(defaultNotes);
-  const [skills, setSkills] = useState(
+  const [skills, setSkills] = useState<ListItem[]>(
     defaultSkills.map((skill) => createListItem(skill)),
   );
-  const [inventoryItems, setInventoryItems] = useState(
+  const [inventoryItems, setInventoryItems] = useState<ListItem[]>(
     defaultInventory.map((item) => createListItem(item)),
   );
 
-  const updateInventoryItem = (id, value) => {
+  const updateInventoryItem = (id: string, value: string) => {
     setInventoryItems((prev) => {
       return prev.map((item) => (item.id === id ? { ...item, value } : item));
     });
   };
 
-  const toggleInventoryItem = (id) => {
+  const toggleInventoryItem = (id: string) => {
     setInventoryItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, checked: !item.checked } : item,
@@ -131,7 +154,7 @@ export default function App() {
     });
   };
 
-  const removeInventoryItem = (id) => {
+  const removeInventoryItem = (id: string) => {
     setInventoryItems((prev) => prev.filter((item) => item.id !== id));
   };
 
@@ -145,7 +168,7 @@ export default function App() {
     });
   };
 
-  const updateSkill = (id, value) => {
+  const updateSkill = (id: string, value: string) => {
     setSkills((prev) => {
       return prev.map((skill) =>
         skill.id === id ? { ...skill, value } : skill,
@@ -153,7 +176,7 @@ export default function App() {
     });
   };
 
-  const toggleSkill = (id) => {
+  const toggleSkill = (id: string) => {
     setSkills((prev) =>
       prev.map((skill) =>
         skill.id === id ? { ...skill, checked: !skill.checked } : skill,
@@ -161,7 +184,7 @@ export default function App() {
     );
   };
 
-  const removeSkill = (id) => {
+  const removeSkill = (id: string) => {
     setSkills((prev) => prev.filter((skill) => skill.id !== id));
   };
 
@@ -171,7 +194,7 @@ export default function App() {
         <select
           className="view-select"
           value={view}
-          onChange={(event) => setView(event.target.value)}
+          onChange={(event) => setView(event.target.value as ViewMode)}
           aria-label="Select view"
         >
           <option value="equipment">Skills & Equipment</option>
