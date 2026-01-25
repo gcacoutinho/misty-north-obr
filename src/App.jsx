@@ -19,9 +19,10 @@ const defaultInventory = [];
 
 const MAX_LIST_ITEMS = 10;
 
-const createListItem = (value = "") => ({
+const createListItem = (value = "", checked = false) => ({
   id: crypto.randomUUID(),
   value,
+  checked,
 });
 
 function MarkdownPanel({ title, value, onChange }) {
@@ -54,7 +55,50 @@ function MarkdownPanel({ title, value, onChange }) {
   );
 }
 
-function InventoryList({ items, onChange, onAdd, onRemove }) {
+function ListEntry({
+  item,
+  index,
+  placeholder,
+  itemLabel,
+  onChange,
+  onToggle,
+  onRemove,
+}) {
+  return (
+    <li className="list-entry">
+      <span className="list-entry__number">{index + 1}.</span>
+      <input
+        className={`list-entry__input${
+          item.checked ? " list-entry__input--checked" : ""
+        }`}
+        type="text"
+        value={item.value}
+        onChange={(event) => onChange(item.id, event.target.value)}
+        placeholder={placeholder}
+      />
+      <div className="list-entry__actions">
+        <label className="list-entry__toggle">
+          <input
+            type="checkbox"
+            checked={item.checked}
+            onChange={() => onToggle(item.id)}
+            aria-label={`Mark ${itemLabel} complete`}
+          />
+        </label>
+        <button
+          className="list-entry__remove"
+          type="button"
+          onClick={() => onRemove(item.id)}
+          aria-label={`Remove ${itemLabel}`}
+        >
+          <span aria-hidden="true">🗑️</span>
+        </button>
+      </div>
+    </li>
+  );
+}
+
+function InventoryList({ items, onChange, onAdd, onRemove, onToggle }) {
   const isAtLimit = items.length >= MAX_LIST_ITEMS;
 
   return (
@@ -76,28 +120,19 @@ function InventoryList({ items, onChange, onAdd, onRemove }) {
       {items.length === 0 ? (
         <p className="inventory__empty">No equipment yet. Add an item.</p>
       ) : (
-        <ul>
-          {items.map((item, index) => {
-            return (
-              <li key={item.id} className="inventory__item">
-                <span className="inventory__number">{index + 1}.</span>
-                <input
-                  className="inventory__input"
-                  type="text"
-                  value={item.value}
-                  onChange={(event) => onChange(item.id, event.target.value)}
-                />
-                <button
-                  className="inventory__remove"
-                  type="button"
-                  onClick={() => onRemove(item.id)}
-                  aria-label="Remove item"
-                >
-                  <span aria-hidden="true">🗑️</span>
-                </button>
-              </li>
-            );
-          })}
+        <ul className="inventory__list">
+          {items.map((item, index) => (
+            <ListEntry
+              key={item.id}
+              item={item}
+              index={index}
+              placeholder="New item"
+              itemLabel="item"
+              onChange={onChange}
+              onToggle={onToggle}
+              onRemove={onRemove}
+            />
+          ))}
         </ul>
       )}
     </div>
@@ -118,6 +153,14 @@ export default function App() {
     setInventoryItems((prev) => {
       return prev.map((item) => (item.id === id ? { ...item, value } : item));
     });
+  };
+
+  const toggleInventoryItem = (id) => {
+    setInventoryItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item,
+      ),
+    );
   };
 
   const addInventoryItem = () => {
@@ -150,6 +193,14 @@ export default function App() {
         skill.id === id ? { ...skill, value } : skill,
       );
     });
+  };
+
+  const toggleSkill = (id) => {
+    setSkills((prev) =>
+      prev.map((skill) =>
+        skill.id === id ? { ...skill, checked: !skill.checked } : skill,
+      ),
+    );
   };
 
   const removeSkill = (id) => {
@@ -202,25 +253,17 @@ export default function App() {
                 <p className="skills__empty">No skills yet. Add one.</p>
               ) : (
                 <ul className="skills__list">
-                  {skills.map((skill) => (
-                    <li key={skill.id} className="skills__item">
-                      <input
-                        className="skills__input"
-                        type="text"
-                        value={skill.value}
-                        onChange={(event) =>
-                          updateSkill(skill.id, event.target.value)
-                        }
-                        placeholder="New skill"
-                      />
-                      <button
-                        className="skills__remove"
-                        type="button"
-                        onClick={() => removeSkill(skill.id)}
-                      >
-                        Remove
-                      </button>
-                    </li>
+                  {skills.map((skill, index) => (
+                    <ListEntry
+                      key={skill.id}
+                      item={skill}
+                      index={index}
+                      placeholder="New skill"
+                      itemLabel="skill"
+                      onChange={updateSkill}
+                      onToggle={toggleSkill}
+                      onRemove={removeSkill}
+                    />
                   ))}
                 </ul>
               )}
@@ -230,6 +273,7 @@ export default function App() {
               onChange={updateInventoryItem}
               onAdd={addInventoryItem}
               onRemove={removeInventoryItem}
+              onToggle={toggleInventoryItem}
             />
           </main>
         )}
