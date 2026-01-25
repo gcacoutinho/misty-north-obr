@@ -4,7 +4,9 @@
   box-sizing: border-box;
 }
 
+html,
 body {
+  height: 100%;
   margin: 0;
   font-family: "Georgia", "Times New Roman", serif;
   background: #f5f1e6;
@@ -12,7 +14,7 @@ body {
 }
 
 #root {
-  min-height: 100vh;
+  height: 100%;
 }
 
 button,
