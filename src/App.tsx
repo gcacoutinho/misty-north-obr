@@ -25,6 +25,7 @@ type MarkdownPanelProps = {
   title: string;
   value: string;
   onChange: (value: string) => void;
+  className?: string;
 };
 
 type InventoryListProps = {
@@ -43,11 +44,16 @@ const createListItem = (value = "", checked = false): ListItem => ({
   checked,
 });
 
-function MarkdownPanel({ title, value, onChange }: MarkdownPanelProps) {
+function MarkdownPanel({
+  title,
+  value,
+  onChange,
+  className,
+}: MarkdownPanelProps) {
   const [isEditing, setIsEditing] = useState(true);
 
   return (
-    <section className="panel">
+    <section className={["panel", className].filter(Boolean).join(" ")}>
       <div className="panel__header">
         <h2>{title}</h2>
         <button
@@ -204,14 +210,13 @@ export default function App() {
 
       <div className="sheet-frame">
         {view === "character" ? (
-          <main className="sheet">
-            <section className="center">
-              <MarkdownPanel
-                title="Character Notes"
-                value={notes}
-                onChange={setNotes}
-              />
-            </section>
+          <main className="inventory-view">
+            <MarkdownPanel
+              className="panel--plain"
+              title="Character Notes"
+              value={notes}
+              onChange={setNotes}
+            />
           </main>
         ) : (
           <main className="inventory-view">
