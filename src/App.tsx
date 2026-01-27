@@ -37,6 +37,8 @@ type MarkdownPanelProps = {
   onChange: (value: string) => void;
   className?: string;
   textareaRef?: React.RefObject<HTMLTextAreaElement>;
+  helpLink?: string;
+  helpLabel?: string;
 };
 
 const createListItem = (value = "", checked = false): ListItem => ({
@@ -51,13 +53,31 @@ function MarkdownPanel({
   onChange,
   className,
   textareaRef,
+  helpLink,
+  helpLabel = "Markdown help",
 }: MarkdownPanelProps) {
   const [isEditing, setIsEditing] = useState(true);
 
   return (
     <section className={["panel", className].filter(Boolean).join(" ")}>
       <div className="panel__header">
-        <h2>{title}</h2>
+        <div className="panel__title">
+          <h2>{title}</h2>
+          {helpLink ? (
+            <a
+              className="panel__help"
+              href={helpLink}
+              target="_blank"
+              rel="noreferrer"
+              title={helpLabel}
+              aria-label={helpLabel}
+            >
+              <span className="panel__help-icon" aria-hidden="true">
+                {"\u{1F6C8}"}
+              </span>
+            </a>
+          ) : null}
+        </div>
         <button
           className="panel__toggle"
           type="button"
@@ -252,6 +272,8 @@ export default function App() {
           value={notes}
           onChange={handleNotesChange}
           textareaRef={notesInputRef}
+          helpLink="https://commonmark.org/help/"
+          helpLabel="Markdown help guide"
         />
         <section className="list">
           <div className="list__header">

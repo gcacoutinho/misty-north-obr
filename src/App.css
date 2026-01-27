@@ -40,8 +40,32 @@
   gap: 12px;
 }
 
+.panel__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .panel__header h2 {
   margin: 0;
+}
+
+.panel__help {
+  display: inline-flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.panel__help-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.panel__help:hover {
+  text-decoration: underline;
 }
 
 .panel__toggle {
