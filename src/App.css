@@ -85,7 +85,7 @@
   min-height: 360px;
   background: #fff;
   resize: none;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .panel__preview {
