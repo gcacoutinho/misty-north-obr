@@ -4,7 +4,8 @@ type ListEntryProps = {
   item: ListItem;
   index: number;
   placeholder: string;
-  itemLabel: string;
+  toggleLabel: string;
+  removeLabel: string;
   onChange: (id: string, value: string) => void;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
@@ -14,7 +15,8 @@ export default function ListEntry({
   item,
   index,
   placeholder,
-  itemLabel,
+  toggleLabel,
+  removeLabel,
   onChange,
   onToggle,
   onRemove,
@@ -37,14 +39,14 @@ export default function ListEntry({
             type="checkbox"
             checked={item.checked}
             onChange={() => onToggle(item.id)}
-            aria-label={`Mark ${itemLabel} complete`}
+            aria-label={toggleLabel}
           />
         </label>
         <button
           className="list-entry__remove"
           type="button"
           onClick={() => onRemove(item.id)}
-          aria-label={`Remove ${itemLabel}`}
+          aria-label={removeLabel}
         >
           <span aria-hidden="true">🗑️</span>
         </button>

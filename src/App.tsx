@@ -1,19 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 import "./App.css";
 import ListEntry from "./components/ListEntry";
 import type { ListItem } from "./types";
-
-const defaultNotes = `### Lineage
-- Human
-
-### Traits
-- Determined
-- Curious
-
-### Flaws
-- Impulsive
-`;
 
 const defaultSkills: string[] = [];
 
@@ -25,6 +15,16 @@ const MAX_LIST_ITEMS = 10;
 
 type InventoryListProps = {
   items: ListItem[];
+  strings: {
+    title: string;
+    add: string;
+    empty: string;
+    limit: string;
+    placeholder: string;
+    itemLabel: string;
+    toggleLabel: string;
+    removeLabel: string;
+  };
   onChange: (id: string, value: string) => void;
   onAdd: () => void;
   onRemove: (id: string) => void;
@@ -38,7 +38,9 @@ type MarkdownPanelProps = {
   className?: string;
   textareaRef?: React.RefObject<HTMLTextAreaElement>;
   helpLink?: string;
-  helpLabel?: string;
+  helpLabel: string;
+  editLabel: string;
+  previewLabel: string;
 };
 
 const createListItem = (value = "", checked = false): ListItem => ({
@@ -54,7 +56,9 @@ function MarkdownPanel({
   className,
   textareaRef,
   helpLink,
-  helpLabel = "Markdown help",
+  helpLabel,
+  editLabel,
+  previewLabel,
 }: MarkdownPanelProps) {
   const [isEditing, setIsEditing] = useState(true);
 
@@ -83,7 +87,7 @@ function MarkdownPanel({
           type="button"
           onClick={() => setIsEditing((prev) => !prev)}
         >
-          {isEditing ? "Preview" : "Edit"}
+          {isEditing ? previewLabel : editLabel}
         </button>
       </div>
       {isEditing ? (
@@ -104,6 +108,7 @@ function MarkdownPanel({
 
 function InventoryList({
   items,
+  strings,
   onChange,
   onAdd,
   onRemove,
@@ -114,21 +119,21 @@ function InventoryList({
   return (
     <div className="list">
       <div className="list__header">
-        <h2>Equipment</h2>
+        <h2>{strings.title}</h2>
         <button
           className="list__add"
           type="button"
           onClick={onAdd}
           disabled={isAtLimit}
         >
-          Add item
+          {strings.add}
         </button>
       </div>
       {isAtLimit ? (
-        <p className="list__limit">Maximum of 10 items reached.</p>
+        <p className="list__limit">{strings.limit}</p>
       ) : null}
       {items.length === 0 ? (
-        <p className="list__empty">No equipment yet. Add an item.</p>
+        <p className="list__empty">{strings.empty}</p>
       ) : (
         <ul className="list__list">
           {items.map((item, index) => (
@@ -136,8 +141,9 @@ function InventoryList({
               key={item.id}
               item={item}
               index={index}
-              placeholder="New item"
-              itemLabel="item"
+              placeholder={strings.placeholder}
+              toggleLabel={strings.toggleLabel}
+              removeLabel={strings.removeLabel}
               onChange={onChange}
               onToggle={onToggle}
               onRemove={onRemove}
@@ -150,7 +156,8 @@ function InventoryList({
 }
 
 export default function App() {
-  const [notes, setNotes] = useState(defaultNotes);
+  const { t } = useTranslation();
+  const [notes, setNotes] = useState(() => t("notes.defaultContent"));
   const notesInputRef = useRef<HTMLTextAreaElement>(null);
   const [skills, setSkills] = useState<ListItem[]>(
     defaultSkills.map((skill) => createListItem(skill)),
@@ -263,35 +270,80 @@ export default function App() {
     setNotes(value);
   };
 
+  const equipmentStrings = {
+    title: t("lists.equipment.title"),
+    add: t("lists.equipment.add"),
+    empty: t("lists.equipment.empty"),
+    limit: t("lists.equipment.limit"),
+    placeholder: t("lists.equipment.placeholder"),
+    itemLabel: t("lists.equipment.itemLabel"),
+    toggleLabel: t("listEntry.toggleLabel", {
+      itemLabel: t("lists.equipment.itemLabel"),
+    }),
+    removeLabel: t("listEntry.removeLabel", {
+      itemLabel: t("lists.equipment.itemLabel"),
+    }),
+  };
+  const skillsStrings = {
+    title: t("lists.skills.title"),
+    add: t("lists.skills.add"),
+    empty: t("lists.skills.empty"),
+    limit: t("lists.skills.limit"),
+    placeholder: t("lists.skills.placeholder"),
+    itemLabel: t("lists.skills.itemLabel"),
+    toggleLabel: t("listEntry.toggleLabel", {
+      itemLabel: t("lists.skills.itemLabel"),
+    }),
+    removeLabel: t("listEntry.removeLabel", {
+      itemLabel: t("lists.skills.itemLabel"),
+    }),
+  };
+  const spellsStrings = {
+    title: t("lists.spells.title"),
+    add: t("lists.spells.add"),
+    empty: t("lists.spells.empty"),
+    limit: t("lists.spells.limit"),
+    placeholder: t("lists.spells.placeholder"),
+    itemLabel: t("lists.spells.itemLabel"),
+    toggleLabel: t("listEntry.toggleLabel", {
+      itemLabel: t("lists.spells.itemLabel"),
+    }),
+    removeLabel: t("listEntry.removeLabel", {
+      itemLabel: t("lists.spells.itemLabel"),
+    }),
+  };
+
   return (
     <div className="app">
       <div className="sheet-frame">
         <MarkdownPanel
           className="panel--plain"
-          title="Notes"
+          title={t("notes.title")}
           value={notes}
           onChange={handleNotesChange}
           textareaRef={notesInputRef}
           helpLink="https://commonmark.org/help/"
-          helpLabel="Markdown help guide"
+          helpLabel={t("markdown.helpLabel")}
+          editLabel={t("markdown.editLabel")}
+          previewLabel={t("markdown.previewLabel")}
         />
         <section className="list">
           <div className="list__header">
-            <h2>Skills</h2>
+            <h2>{skillsStrings.title}</h2>
             <button
               className="list__add"
               type="button"
               onClick={addSkill}
               disabled={skills.length >= MAX_LIST_ITEMS}
             >
-              Add skill
+              {skillsStrings.add}
             </button>
           </div>
           {skills.length >= MAX_LIST_ITEMS ? (
-            <p className="list__limit">Maximum of 10 skills reached.</p>
+            <p className="list__limit">{skillsStrings.limit}</p>
           ) : null}
           {skills.length === 0 ? (
-            <p className="list__empty">No skills yet. Add one.</p>
+            <p className="list__empty">{skillsStrings.empty}</p>
           ) : (
             <ul className="list__list">
               {skills.map((skill, index) => (
@@ -299,8 +351,9 @@ export default function App() {
                   key={skill.id}
                   item={skill}
                   index={index}
-                  placeholder="New skill"
-                  itemLabel="skill"
+                  placeholder={skillsStrings.placeholder}
+                  toggleLabel={skillsStrings.toggleLabel}
+                  removeLabel={skillsStrings.removeLabel}
                   onChange={updateSkill}
                   onToggle={toggleSkill}
                   onRemove={removeSkill}
@@ -311,6 +364,7 @@ export default function App() {
         </section>
         <InventoryList
           items={inventoryItems}
+          strings={equipmentStrings}
           onChange={updateInventoryItem}
           onAdd={addInventoryItem}
           onRemove={removeInventoryItem}
@@ -318,21 +372,21 @@ export default function App() {
         />
         <section className="list">
           <div className="list__header">
-            <h2>Spells</h2>
+            <h2>{spellsStrings.title}</h2>
             <button
               className="list__add"
               type="button"
               onClick={addSpell}
               disabled={spells.length >= MAX_LIST_ITEMS}
             >
-              Add spell
+              {spellsStrings.add}
             </button>
           </div>
           {spells.length >= MAX_LIST_ITEMS ? (
-            <p className="list__limit">Maximum of 10 spells reached.</p>
+            <p className="list__limit">{spellsStrings.limit}</p>
           ) : null}
           {spells.length === 0 ? (
-            <p className="list__empty">No spells yet. Add one.</p>
+            <p className="list__empty">{spellsStrings.empty}</p>
           ) : (
             <ul className="list__list">
               {spells.map((spell, index) => (
@@ -340,8 +394,9 @@ export default function App() {
                   key={spell.id}
                   item={spell}
                   index={index}
-                  placeholder="New spell"
-                  itemLabel="spell"
+                  placeholder={spellsStrings.placeholder}
+                  toggleLabel={spellsStrings.toggleLabel}
+                  removeLabel={spellsStrings.removeLabel}
                   onChange={updateSpell}
                   onToggle={toggleSpell}
                   onRemove={removeSpell}
